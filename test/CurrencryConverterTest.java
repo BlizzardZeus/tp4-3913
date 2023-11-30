@@ -6,6 +6,6 @@ public class CurrencryConverterTest {
     
     @Test
     public void test(){
-        System.out.println("Hey");
+        System.out.println("Heyy");
     }
 }
