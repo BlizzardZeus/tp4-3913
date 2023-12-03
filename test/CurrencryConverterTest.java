@@ -22,6 +22,7 @@ public class CurrencryConverterTest {
     public void setUp() {
 
         currencies = Currency.init();
+
         
 
     }
@@ -70,7 +71,6 @@ public class CurrencryConverterTest {
     public void testValidConversion() {
         // Conversion avec des devises valides
         assertNotNull(MainWindow.convert("USD", "EUR", currencies, 500.15));
-        assertNotNull(MainWindow.convert("USD", "CHF", currencies, 1020.00));
 
     }
 
@@ -100,6 +100,48 @@ public class CurrencryConverterTest {
         //Test quand meme accepter, suit pas les specification
         assertNotNull(MainWindow.convert("USD", "EUR", currencies, 1000001.00));
     }
+
+    //Tests boite blanche
+    //Tests  couverte instruction
+
+    @Test
+    public void testCurrencyFound(){
+        assertNotNull(MainWindow.convert("USD", "CHF", currencies, 1020.00));
+        
+    }
+    @Test
+    public void testCurrencyNotFound(){
+        assertEquals(Double.valueOf(0.0),MainWindow.convert("USD", "AUD", currencies, 900.00));
+
+        
+    }
+
+    @Test
+    public void testConvertValidAmount(){
+        //test conversion valide
+        Double resultat = Currency.convert(100.00, 1.2);
+        assertEquals(Double.valueOf(120.0), resultat);
+    }
+    @Test
+    public void testConvertZeroAmount(){
+        //test conversion valide avec 0
+        Double resultat = Currency.convert(0.0, 1.2);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+    @Test
+    public void testConvertZeroExchangeAmount(){
+        //test conversion valide avec 0 exchange rate
+        Double resultat = Currency.convert(100.0, 0.0);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+
+    @Test
+    public void testConvert2Emount(){
+        //test conversion valide avec plusieurs decimal
+        Double resultat = Currency.convert(100.0, 1.2345);
+        assertEquals(Double.valueOf(123.45), resultat);
+    }
+
     }
 
     
