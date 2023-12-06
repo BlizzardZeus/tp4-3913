@@ -1,20 +1,15 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
 import org.junit.*;
-import org.junit.Assert.*;
 import currencyConverter.Currency;
-import currencyConverter.CurrencyConverter;
 import currencyConverter.MainWindow;
+
+import junit.runner.Version;
+
 
 public class CurrencryConverterTest {
     private ArrayList<Currency> currencies;
@@ -22,7 +17,7 @@ public class CurrencryConverterTest {
     @Before
     public void setUp() {;
         currencies = Currency.init();
-
+        System.out.println(Version.id());
     }
 
     //Test de Boite Noire
@@ -31,7 +26,6 @@ public class CurrencryConverterTest {
     public void testValidConversion() {
         // Conversion avec des devises valides
         assertNotNull(MainWindow.convert("US Dollar", "Euro", currencies, 500.15));
-
     }
 
     @Test
@@ -59,9 +53,10 @@ public class CurrencryConverterTest {
 
     @Test
     public void testUnAcceptedAmoutConversion(){
+        double zeroAmount = 0.0;
         double unacceptedAmout = 10000000.0;
-        double result = MainWindow.convert("US Dollar", "Euro", currencies, unacceptedAmout);
-        assertNotNull(result);
+        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, unacceptedAmout);
+        assertEquals(zeroAmount, actualResult, 0.001);
     }
 
     @Test
@@ -86,9 +81,36 @@ public class CurrencryConverterTest {
     }
 
     @Test
+    public void testConvertNegativeExchangeAmount(){
+        //test conversion valide avec 0 exchange rate
+        Double resultat = Currency.convert(100.0, -1.2);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+
+    @Test
     public void testConvertZeroAmount(){
         //test conversion valide avec 0
         Double resultat = Currency.convert(0.0, 1.2);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+    
+    @Test
+    public void testConvertNegativeAmount(){
+        //test conversion valide avec 0
+        Double resultat = Currency.convert(-100.0, 1.2);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+
+    @Test
+    public void testConvertExtremeAmount(){
+        //test conversion valide avec 0
+        Double resultat = Currency.convert(1000000.0, 1.2);
+        assertEquals(Double.valueOf(1200000.0), resultat);
+    }
+    @Test
+    public void testConvertUnAcceptedAmoutAmount(){
+        //test conversion valide avec 0
+        Double resultat = Currency.convert(10000000.0, 1.2);
         assertEquals(Double.valueOf(0.0), resultat);
     }
 
@@ -104,12 +126,27 @@ public class CurrencryConverterTest {
     @Test
     public void testsBoiteBlanche(){
         double zeroAmount = 0.0;
+        String[] curren = new String[]{
+            "US Dollar",
+            "Euro",
+            "British Pound",
+            "Swiss Franc",
+            "Chinese Yuan Renminbi",
+            "Japanese Yen"
+        };
+
+        double result;
+
 
         //MainWindow.convert test
-        //Valid Currency 1 and 2 (it tests the whole function)
-        double result = MainWindow.convert("US Dollar", "Chinese Yuan Renminbi", currencies, 1020.00);
-        System.out.println(result);
-        assertNotEquals(zeroAmount, result, 0.001);
+        //Valid Currency 1 and 2 (it tests all the currency options)
+        for (int i = 0; i < curren.length; i++) {
+            for (int j = 0; j < curren.length; j++) {
+                System.out.println(curren[i]+ " / "+ curren[j]);
+                result = MainWindow.convert(curren[i], curren[j], currencies, 1000.00);
+                assertNotNull(result);
+            }
+        }
 
         //Valid Currency 2 but Invalid Currency 1 (it passes in zero if)
         result = MainWindow.convert("US Dol", "Chinese Yuan Renminbi", currencies, 1020.00);

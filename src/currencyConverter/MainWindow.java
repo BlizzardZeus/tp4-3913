@@ -148,9 +148,9 @@ public class MainWindow extends JFrame {
 	        	    e.printStackTrace();
 	        	    amount = 0.0;
 	        	}
-	        	System.out.println(amount);
+	        	
 	        	price = convert(nameCurrency1, nameCurrency2, currencies, amount);
-	        	System.out.println(price);
+	        	
 	        	// Format numbers to avoid "E7" problem
 	        	formattedPrice = format.format(price);
 	        	formattedAmount = format.format(amount);
