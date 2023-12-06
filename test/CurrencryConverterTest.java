@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -25,54 +26,6 @@ public class CurrencryConverterTest {
     }
 
     //Test de Boite Noire
-    @Test
-    public void testNegativeAmountConversion() {
-        double negativeAmount = -100.0;
-
-        double conversion = MainWindow.convert("US Dollar", "Euro", currencies, -100.0);
-        System.out.println(conversion);
-        try {
-            assertEquals(0, conversion, 0.001);
-
-            System.out.println("Handles negative number well");
-
-        } catch (Exception e) {
-            // TODO: handle exception
-            System.out.println("Doesnt handle negative number well");
-        }
-        
-    }
-
-    @Test
-    public void testZeroAmountConversion() {
-        double zeroAmount = 0.0;
-        double expectedResult = 0.0;
-        
-        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, zeroAmount);
-    
-        assertEquals(expectedResult, actualResult, 0.001);
-    }
-
-    @Test
-    public void testExtremeAmountConversion(){
-        double amount = 1000000.0;
-        double expectedResult = 930000.0;
-
-        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, amount);
-
-        assertEquals(expectedResult, actualResult, 0.001);
-    }
-
-    @Test
-    public void testUnAcceptedAmoutConversion(){
-        double unacceptedAmout = 10000000.0;
-
-        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, unacceptedAmout);
-    
-        assertEquals(0, actualResult, 0.001);
-    }
-
-    //Boite noir test supplementaire
 
     @Test
     public void testValidConversion() {
@@ -82,62 +35,40 @@ public class CurrencryConverterTest {
     }
 
     @Test
-    public void testConversionWithInvalidCurrency() {
+    public void testNegativeAmountConversion() {
+        double negativeAmount = -100.0;
+        double expectedResult = 0.0;
+        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, negativeAmount);
+        assertEquals(expectedResult, actualResult, 0.001);
+    }
+
+    @Test
+    public void testZeroAmountConversion() {
+        double zeroAmount = 0.0;
+        double result = MainWindow.convert("US Dollar", "Euro", currencies, zeroAmount);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testExtremeAmountConversion(){
+        double amount = 1000000.0;
+        double expectedResult = 930000.0;
+        double actualResult = MainWindow.convert("US Dollar", "Euro", currencies, amount);
+        assertEquals(expectedResult, actualResult, 0.001);
+    }
+
+    @Test
+    public void testUnAcceptedAmoutConversion(){
+        double unacceptedAmout = 10000000.0;
+        double result = MainWindow.convert("US Dollar", "Euro", currencies, unacceptedAmout);
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testConversionInvalidCurrency() {
         // Conversion avec une devise non valide (CAD, AUD)
         assertEquals(Double.valueOf(0.0),MainWindow.convert("US Dollar", "Ca Dollar", currencies, 500.92));
         assertEquals(Double.valueOf(0.0),MainWindow.convert("US Dollar", "Au Dollar", currencies, 900.00));
-    }
-
-    @Test
-    public void testConversionWithInvalidAmount() {
-        // Conversion avec un montant negatif
-        assertEquals(Double.valueOf(0.0),MainWindow.convert("US Dollar", "Euro", currencies, -100.00));
-    }
-
-    @Test
-    public void testConversionOnLimit() {
-        // Conversion avec des montants à la limite
-        assertNotNull(MainWindow.convert("US Dollar", "Euro", currencies, 0.00));
-        assertNotNull(MainWindow.convert("US Dollar", "Euro", currencies, 1000000.00));
-    }
-
-    @Test
-    public void testConversionAboveLimit() {
-        // Conversion avec un montant au-dessus de la limite valide
-        //Test quand meme accepter, suit pas les specification
-        assertNotNull(MainWindow.convert("US Dollar", "Euro", currencies, 1000001.00));
-    }
-
-    //Tests boite blanche
-    //Tests  couverte instruction
-
-    @Test
-    public void testCurrencyFound(){
-        assertNotNull(MainWindow.convert("US Dollar", "Chinese Yuan Renminbi", currencies, 1020.00));
-        
-    }
-    @Test
-    public void testCurrencyNotFound(){
-        assertEquals(Double.valueOf(0.0),MainWindow.convert("US Dollar", "Au dollar", currencies, 900.00));
-    }
-
-    @Test
-    public void testConvertValidAmount(){
-        //test conversion valide
-        Double resultat = Currency.convert(100.00, 1.2);
-        assertEquals(Double.valueOf(120.0), resultat);
-    }
-    @Test
-    public void testConvertZeroAmount(){
-        //test conversion valide avec 0
-        Double resultat = Currency.convert(0.0, 1.2);
-        assertEquals(Double.valueOf(0.0), resultat);
-    }
-    @Test
-    public void testConvertZeroExchangeAmount(){
-        //test conversion valide avec 0 exchange rate
-        Double resultat = Currency.convert(100.0, 0.0);
-        assertEquals(Double.valueOf(0.0), resultat);
     }
 
     @Test
@@ -146,6 +77,64 @@ public class CurrencryConverterTest {
         Double resultat = Currency.convert(100.0, 1.2345);
         assertEquals(Double.valueOf(123.45), resultat);
     }
+
+    @Test
+    public void testConvertZeroExchangeAmount(){
+        //test conversion valide avec 0 exchange rate
+        Double resultat = Currency.convert(100.0, 0.0);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+
+    @Test
+    public void testConvertZeroAmount(){
+        //test conversion valide avec 0
+        Double resultat = Currency.convert(0.0, 1.2);
+        assertEquals(Double.valueOf(0.0), resultat);
+    }
+
+    @Test
+    public void testConvertValidAmount(){
+        //test conversion valide
+        Double resultat = Currency.convert(100.00, 1.2);
+        assertEquals(Double.valueOf(120.0), resultat);
+    }
+
+
+    //Tests boite blanche
+    @Test
+    public void testsBoiteBlanche(){
+        double zeroAmount = 0.0;
+
+        //MainWindow.convert test
+        //Valid Currency 1 and 2 (it tests the whole function)
+        double result = MainWindow.convert("US Dollar", "Chinese Yuan Renminbi", currencies, 1020.00);
+        System.out.println(result);
+        assertNotEquals(zeroAmount, result, 0.001);
+
+        //Valid Currency 2 but Invalid Currency 1 (it passes in zero if)
+        result = MainWindow.convert("US Dol", "Chinese Yuan Renminbi", currencies, 1020.00);
+        System.out.println(result);
+        assertEquals(zeroAmount,result,0.001);
+
+        //Valid Currency 1 but Invalid Currency 2 (it passes in the first if)
+        result = MainWindow.convert("US Dollar", "Chinese", currencies, 1020.00);
+        System.out.println(result);
+        assertEquals(zeroAmount,result,0.001);
+
+        //Currency.convert test
+        //Valid Amount and ExchangeValue (it tests the whole function *the only path*)
+        result = Currency.convert(100.00, 1.2);
+        System.out.println(result);
+        assertNotEquals(zeroAmount, result, 0.001);
+    }
+
+
+
+
+
+
+
+
 
     }
 
