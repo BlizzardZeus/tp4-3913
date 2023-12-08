@@ -153,6 +153,11 @@ public class CurrencryConverterTest {
         System.out.println(result);
         assertEquals(zeroAmount,result,0.001);
 
+        //Invalid Currency 1 and 2
+        result = MainWindow.convert("US Dol", "Yuan", currencies, 1020.00);
+        System.out.println(result);
+        assertEquals(zeroAmount,result,0.001);
+
         //Valid Currency 1 but Invalid Currency 2 (it passes in the first if)
         result = MainWindow.convert("US Dollar", "Chinese", currencies, 1020.00);
         System.out.println(result);
